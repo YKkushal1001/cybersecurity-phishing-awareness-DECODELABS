@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DecodeLabs - Phishing Awareness Analysis Portal</title>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --accent-color: #3b82f6;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        header {
+            background-color: var(--bg-secondary);
+            border-bottom: 2px solid #2d3748;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            color: var(--text-main);
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            color: var(--accent-color);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            border: 1px solid #2d3748;
+        }
+
+        .card h2 {
+            border-bottom: 2px solid #2d3748;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Email Sandbox */
+        .email-client {
+            background-color: #ffffff;
+            color: #333333;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+
+        .email-header {
+            background-color: #f1f5f9;
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .email-meta {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .email-meta strong {
+            color: #475569;
+        }
+
+        .email-body {
+            padding: 20px;
+            min-height: 200px;
+            background: #ffffff;
+        }
+
+        .email-attachment {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        /* Interactive Triage Rules */
+        .interactive-section select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            border: 1px solid #475569;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #2563eb;
+        }
+
+        /* Outcome Status Screens */
+        .outcome-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .outcome-safe { background-color: rgba(16, 185, 129, 0.2); border: 1px solid var(--accent-success); color: #34d399; }
+        .outcome-suspicious { background-color: rgba(245, 158, 11, 0.2); border: 1px solid var(--accent-warning); color: #fbbf24; }
+        .outcome-malicious { background-color: rgba(239, 68, 68, 0.2); border: 1px solid var(--accent-danger); color: #f87171; }
+
+        /* Facts List */
+        ul.threat-list {
+            list-style: none;
+        }
+
+        ul.threat-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #2d3748;
+            font-size: 14px;
+        }
+
+        ul.threat-list li strong {
+            color: var(--accent-warning);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-muted);
+            font-size: 12px;
+            border-top: 1px solid #2d3748;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Cyber Security Analyst Training Kit</h1>
+        <p>Project 3: Phishing Triage Phase | Batch 2026</p>
+    </header>
+
+    <div class="container">
+        <div class="grid">
+            
+            <div class="space-y">
+                <div class="card">
+                    <h2><i data-lucide="shield-alert"></i> Live Threat Simulation Workspace</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">
+                        Evaluate the simulated threat incoming pipeline below. Choose the correct assessment protocol option to trigger target disposition mitigation mechanisms.
+                    </p>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 5px;">Select Simulation Lure Target Matrix Scenario:</label>
+                        <select id="scenarioSelector" onchange="switchScenario()" style="width: 100%; padding: 10px; background: var(--bg-primary); color: white; border-radius: 4px; border: 1px solid #475569;">
+                            <option value="spoof">Scenario A: Executive Impersonation (Domain Spoofing Attack Pattern)</option>
+                            <option value="microsoft">Scenario B: Credential Harvest (Malicious Multi-vector Extension Lure)</option>
+                            <option value="legit">Scenario C: Internal Project Communication Verification (Routine Sync)</option>
+                        </select>
+                    </div>
+
+                    <div class="email-client">
+                        <div class="email-header">
+                            <div class="email-meta" id="mailFrom"><strong>From:</strong> CEO Name &lt;hacker@gmail.com&gt;</div>
+                            <div class="email-meta" id="mailTo"><strong>To:</strong> internal-finance@company.com</div>
+                            <div class="email-meta" id="mailSub"><strong>Subject:</strong> Urgent Wire Transfer Request</div>
+                        </div>
+                        <div class="email-body" id="mailBody">
+                            <p>Process the attached wire transfer instruction immediately.</p>
+                            <p>This is critical and must remain STRICTLY CONFIDENTIAL. Do not discuss with anyone. Bypass standard procedure.</p>
+                        </div>
+                        <div class="email-attachment" id="mailAttach">
+                            <i data-lucide="file-text" style="color: #64748b;"></i>
+                            <span id="mailAttachName">transfer_instructions.exe</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="card">
+                    <h2><i data-lucide="git-decision"></i> Analysts Triage Mandate</h2>
+                    <div class="interactive-section">
+                        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 15px;">
+                            Map intelligence artifacts gathered to choose structural remediation layout:
+                        </p>
+                        
+                        <label style="font-weight: bold; font-size: 13px;">Classification Taxonomy Option:</label>
+                        <select id="triageClassification">
+                            <option value="">-- Choose Disposition Status --</option>
+                            <option value="safe">Safe (Action: Archive & Close Incident)</option>
+                            <option value="suspicious">Suspicious (Action: Alert Target User Base)</option>
+                            <option value="malicious">Malicious (Action: Network Blacklist & Escalate)</option>
+                        </select>
+
+                        <button class="btn" onclick="processTriageDecision()">Submit Incident Resolution</button>
+
+                        <div id="outcomeSafe" class="outcome-box outcome-safe">
+                            ✔ Incident Resolved: Classified as Safe. Operational workflow closed.
+                        </div>
+                        <div id="outcomeSuspicious" class="outcome-box outcome-suspicious">
+                            ⚠ Caution Advisory Issued: Users warned via internal messaging headers.
+                        </div>
+                        <div id="outcomeMalicious" class="outcome-box outcome-malicious">
+                            🚨 Emergency Protocol Triggered: Edge Firewalls blocks threat infrastructure domain, SOC Escalated!
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 20px;">
+                    <h2><i data-lucide="fingerprint"></i> Threat Vectors Reference</h2>
+                    <ul class="threat-list">
+                        <li><strong>Typosquatting:</strong> Lookalike domain registration strings (e.g. amaz0n.com).</li>
+                        <li><strong>Homoglyph Matrix:</strong> Visually matched text tracking character substitutes (e.g. Cyrillic characters).</li>
+                        <li><strong>Combosquatting:</strong> Suffix security phrasing addition masks (e.g. company-secure-login.com).</li>
+                        <li><strong>Subdomain Trap:</strong> Deep nesting path update obfuscations hiding root endpoints.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        Powered by DecodeLabs &copy; 2026. Designed for Human Firewall Resiliency Building Ecosystems.
+    </footer>
+
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+
+        // Scenario Database Context Mapping
+        const scenarios = {
+            spoof: {
+                from: "<strong>From:</strong> CEO Name &lt;hacker@gmail.com&gt;",
+                to: "<strong>To:</strong> accounting@company.com",
+                sub: "<strong>Subject:</strong> Urgent Wire Transfer Request",
+                body: "<p>Process the attached wire transfer instruction immediately.</p><p>This is critical and must remain STRICTLY CONFIDENTIAL. Do not discuss with anyone. Bypass standard procedure.</p>",
+                attach: "transfer_instructions.exe",
+                correct: "malicious"
+            },
+            microsoft: {
+                from: "<strong>From:</strong> Microsoft Support &lt;support@logins-updates.com&gt;",
+                to: "<strong>To:</strong> corporate-user@company.com",
+                sub: "<strong>Subject:</strong> FW: Urgent: Your Account Security Alert",
+                body: "<p>Your security license renewal state failed context matching criteria verification.</p><p>Review configurations using the browser extension patch download inside the payload folder.</p>",
+                attach: "Security_Update_2026.iso",
+                correct: "malicious"
+            },
+            legit: {
+                from: "<strong>From:</strong> Project Manager &lt;sarah.lee@company.com&gt;",
+                to: "<strong>To:</strong> engineering-team@company.com",
+                sub: "<strong>Subject:</strong> Q3 Project Status Update - Non-Urgent",
+                body: "<p>Hi Team,</p><p>Please review the attached project status roadmap targets for Q3 at your earliest convenience.</p><p>No immediate action is required.</p>",
+                attach: "Q3_Status.pdf",
+                correct: "safe"
+            }
+        };
+
+        function switchScenario() {
+            const selected = document.getElementById('scenarioSelector').value;
+            const data = scenarios[selected];
+            
+            document.getElementById('mailFrom').innerHTML = data.from;
+            document.getElementById('mailTo').innerHTML = data.to;
+            document.getElementById('mailSub').innerHTML = data.sub;
+            document.getElementById('mailBody').innerHTML = data.body;
+            document.getElementById('mailAttachName').innerText = data.attach;
+
+            // Clear previous diagnostic output displays
+            hideOutcomes();
+        }
+
+        function hideOutcomes() {
+            document.getElementById('outcomeSafe').style.display = 'none';
+            document.getElementById('outcomeSuspicious').style.display = 'none';
+            document.getElementById('outcomeMalicious').style.display = 'none';
+        }
+
+        function processTriageDecision() {
+            hideOutcomes();
+            const choice = document.getElementById('triageClassification').value;
+            const selectedScenario = document.getElementById('scenarioSelector').value;
+            const targetCorrect = scenarios[selectedScenario].correct;
+
+            if(!choice) {
+                alert("Please declare classification assessment criteria value assignment matrix standard first.");
+                return;
+            }
+
+            if(choice === 'safe') {
+                document.getElementById('outcomeSafe').style.display = 'block';
+            } else if(choice === 'suspicious') {
+                document.getElementById('outcomeSuspicious').style.display = 'block';
+            } else if(choice === 'malicious') {
+                document.getElementById('outcomeMalicious').style.display = 'block';
+            }
+
+            if(choice === targetCorrect) {
+                alert("Excellent operational diagnostics! Action matches the threat matrix model standard accuracy criteria.");
+            } else {
+                alert("Indicator Warning: Evaluation structural mismatches noticed. Double check source components tracking header anomalies.");
+            }
+        }
+    </script>
+</body>
+</html>

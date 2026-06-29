@@ -542,11 +542,11 @@
     <div class="container">
         <!-- Navigation Tabs -->
         <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('training')"><i data-lucide="book-open"></i> Training</button>
-            <button class="tab-btn" onclick="switchTab('sandbox')"><i data-lucide="shield-alert"></i> Threat Sandbox</button>
-            <button class="tab-btn" onclick="switchTab('quiz')"><i data-lucide="brain"></i> Knowledge Quiz</button>
-            <button class="tab-btn" onclick="switchTab('checklist')"><i data-lucide="list-checks"></i> Red Flags Checklist</button>
-            <button class="tab-btn" onclick="switchTab('resources')"><i data-lucide="link"></i> Resources</button>
+            <button class="tab-btn active" onclick="switchTab('training', event)"><i data-lucide="book-open"></i> Training</button>
+            <button class="tab-btn" onclick="switchTab('sandbox', event)"><i data-lucide="shield-alert"></i> Threat Sandbox</button>
+            <button class="tab-btn" onclick="switchTab('quiz', event)"><i data-lucide="brain"></i> Knowledge Quiz</button>
+            <button class="tab-btn" onclick="switchTab('checklist', event)"><i data-lucide="list-checks"></i> Red Flags Checklist</button>
+            <button class="tab-btn" onclick="switchTab('resources', event)"><i data-lucide="link"></i> Resources</button>
         </div>
 
         <!-- ============ TAB 1: TRAINING ============ -->
@@ -1030,7 +1030,7 @@
         };
 
         // Tab Switching
-        function switchTab(tabName) {
+        function switchTab(tabName, event) {
             // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -1041,10 +1041,13 @@
 
             // Show selected tab
             document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
 
             // Initialize quiz on first view
-            if (tabName === 'quiz' && quizContainer.innerHTML === '') {
+            const quizContainer = document.getElementById('quizContainer');
+            if (tabName === 'quiz' && quizContainer && quizContainer.innerHTML === '') {
                 loadQuiz();
             }
 
@@ -1219,13 +1222,13 @@
 
         // Checklist Functions
         function clearChecklist() {
-            document.querySelectorAll('#training ~ .container .checklist input[type="checkbox"]').forEach(checkbox => {
+            document.querySelectorAll('#checklist .checklist input[type="checkbox"]').forEach(checkbox => {
                 checkbox.checked = false;
             });
         }
 
         function clearActionChecklist() {
-            document.querySelectorAll('[id^="action"]').forEach(checkbox => {
+            document.querySelectorAll('#checklist input[id^="action"]').forEach(checkbox => {
                 checkbox.checked = false;
             });
         }
